@@ -1,0 +1,5 @@
+[console_scripts]
+clean-folder = clean_folder:clean.start
+
+[pytest11]
+clean-folder = clean_folder:clean.start

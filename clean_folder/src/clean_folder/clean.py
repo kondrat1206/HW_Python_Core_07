@@ -36,8 +36,8 @@ def list_files_recursive(real_path):
     return list_files
 
 
-def normalize(dir):
-    list_files = list_files_recursive(dir)
+def normalize(new_dir):
+    list_files = list_files_recursive(new_dir)
     for file in list_files:
         file = re.sub(r'[\\]', '/', file) # Полный путь к файлу
         filename_ext = file.split("/")[-1]  # Получаем имя файла с расширением
@@ -78,8 +78,8 @@ def sort(library, extension, file, new_dir):
         excluded_dirs.append(key)
 
     file = re.sub(r'[\\]', '/', file)
-    print(file)
-    print(new_dir)
+    #print(file)
+    #print(new_dir)
     filedir_src = file.split(new_dir)[1].split('/')[1]
     #print(filedir_src)
     if not os.path.exists(new_dir):
@@ -101,7 +101,7 @@ def sort(library, extension, file, new_dir):
                     os.remove(file)
                     is_recorded = True
                     print("---------------------------------------------------------------------------------------------------------------------------------")
-                    print(f'Найден известный файл {file}  {excluded_dirs}')
+                    print(f'Найден известный файл {file}')
                     print(f'Размещаем в директории {key} c известными типами файлов {ext_group}')
                     print("---------------------------------------------------------------------------------------------------------------------------------")
                     break
@@ -157,39 +157,42 @@ def unpack_archives(library, archive_dir):
                         shutil.unpack_archive(file, unpacked_dir)
             
 
-#if __name__ == '__main__':
+def start():
 
+    library = {'images':('JPEG', 'PNG', 'JPG', 'SVG'),
+                'video':('AVI', 'MP4', 'MOV', 'MKV'),
+                'documents':('DOC', 'DOCX', 'TXT', 'PDF', 'XLSX', 'PPTX'),
+                'audio':('MP3', 'OGG', 'WAV', 'AMR'),
+                'archives':('ZIP', 'GZ', 'TAR'),
+                'scripts':('JS', 'CSS')
+                }
 
-library = {'images':('JPEG', 'PNG', 'JPG', 'SVG'),
-            'video':('AVI', 'MP4', 'MOV', 'MKV'),
-            'documents':('DOC', 'DOCX', 'TXT', 'PDF', 'XLSX', 'PPTX'),
-            'audio':('MP3', 'OGG', 'WAV', 'AMR'),
-            'archives':('ZIP', 'GZ', 'TAR'),
-            'scripts':('JS', 'CSS')
-            }
+    real_path = check_args(sys.argv)
 
-real_path = check_args(sys.argv)
+    new_dir = real_path
 
-new_dir = real_path
+    list_files = list_files_recursive(real_path)
+    for file in list_files:
+        filename = file.split("/")[-1]  # Получаем имя файла с расширением
+        extension = file.split(".")[-1]  # Получаем расширение файла
+        sort(library, extension, file, new_dir)
+    print('Файлы отсортированы')
 
-list_files = list_files_recursive(real_path)
-for file in list_files:
-    filename = file.split("/")[-1]  # Получаем имя файла с расширением
-    extension = file.split(".")[-1]  # Получаем расширение файла
-    sort(library, extension, file, new_dir)
-print('Файлы отсортированы')
+    archive_dir = f'{real_path}/archives'
+    if os.path.exists(archive_dir):
+        print('Обнаружены архивы, приступаем к распаковке')
 
-archive_dir = f'{real_path}/archives'
-if os.path.exists(archive_dir):
-    print('Обнаружены архивы, приступаем к распаковке')
+        unpack_archives(library, archive_dir)
+        print("Архивы распакованы, их содержимое отсортировано")
+    else:
+        print('Архивы не обнаружены')
 
-    unpack_archives(library, archive_dir)
-    print("Архивы распакованы, их содержимое отсортировано")
-else:
-    print('Архивы не обнаружены')
+    normalize(new_dir)
+    print('Имена файлов, за исключением неизвестных типов и распакованных архивов - нормализованы. Завершение работы')
 
-normalize(new_dir)
-print('Имена файлов, за исключением неизвестных типов и распакованных архивов - нормализованы. Завершение работы')
+    remove_empty_directories(new_dir)
+    print(f'Ваши файлы отсортированы в директории {new_dir}, пустые папки удалены')
 
-remove_empty_directories(new_dir)
-print(f'Ваши файлы отсортированы в директории {new_dir}, пустые папки удалены')
+if __name__ == '__main__':
+
+    start()

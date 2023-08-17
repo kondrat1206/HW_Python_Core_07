@@ -157,39 +157,39 @@ def unpack_archives(library, archive_dir):
                         shutil.unpack_archive(file, unpacked_dir)
             
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
 
 
-    library = {'images':('JPEG', 'PNG', 'JPG', 'SVG'),
-               'video':('AVI', 'MP4', 'MOV', 'MKV'),
-               'documents':('DOC', 'DOCX', 'TXT', 'PDF', 'XLSX', 'PPTX'),
-               'audio':('MP3', 'OGG', 'WAV', 'AMR'),
-               'archives':('ZIP', 'GZ', 'TAR'),
-               'scripts':('JS', 'CSS')
-              }
+library = {'images':('JPEG', 'PNG', 'JPG', 'SVG'),
+            'video':('AVI', 'MP4', 'MOV', 'MKV'),
+            'documents':('DOC', 'DOCX', 'TXT', 'PDF', 'XLSX', 'PPTX'),
+            'audio':('MP3', 'OGG', 'WAV', 'AMR'),
+            'archives':('ZIP', 'GZ', 'TAR'),
+            'scripts':('JS', 'CSS')
+            }
 
-    real_path = check_args(sys.argv)
-    
-    new_dir = real_path
-    
-    list_files = list_files_recursive(real_path)
-    for file in list_files:
-        filename = file.split("/")[-1]  # Получаем имя файла с расширением
-        extension = file.split(".")[-1]  # Получаем расширение файла
-        sort(library, extension, file, new_dir)
-    print('Файлы отсортированы')
+real_path = check_args(sys.argv)
 
-    archive_dir = f'{real_path}/archives'
-    if os.path.exists(archive_dir):
-        print('Обнаружены архивы, приступаем к распаковке')
+new_dir = real_path
 
-        unpack_archives(library, archive_dir)
-        print("Архивы распакованы, их содержимое отсортировано")
-    else:
-        print('Архивы не обнаружены')
+list_files = list_files_recursive(real_path)
+for file in list_files:
+    filename = file.split("/")[-1]  # Получаем имя файла с расширением
+    extension = file.split(".")[-1]  # Получаем расширение файла
+    sort(library, extension, file, new_dir)
+print('Файлы отсортированы')
 
-    normalize(new_dir)
-    print('Имена файлов, за исключением неизвестных типов и распакованных архивов - нормализованы. Завершение работы')
+archive_dir = f'{real_path}/archives'
+if os.path.exists(archive_dir):
+    print('Обнаружены архивы, приступаем к распаковке')
 
-    remove_empty_directories(new_dir)
-    print(f'Ваши файлы отсортированы в директории {new_dir}, пустые папки удалены')
+    unpack_archives(library, archive_dir)
+    print("Архивы распакованы, их содержимое отсортировано")
+else:
+    print('Архивы не обнаружены')
+
+normalize(new_dir)
+print('Имена файлов, за исключением неизвестных типов и распакованных архивов - нормализованы. Завершение работы')
+
+remove_empty_directories(new_dir)
+print(f'Ваши файлы отсортированы в директории {new_dir}, пустые папки удалены')

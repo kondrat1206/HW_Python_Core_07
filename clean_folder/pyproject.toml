@@ -16,17 +16,3 @@ classifiers = [
     "License :: MIT License",
     "Operating System :: OS Independent",
 ]
-
-[options]
-package_dir =
-    = src
-
-[options.packages.find]
-where = src
-
-
-[project.urls]
-"Homepage" = "https://github.com/"
-
-[project.entry-points]
-clean-folder = "clean_folder:clean"
